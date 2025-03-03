@@ -1,6 +1,7 @@
 package urlshort
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 )
@@ -74,4 +75,28 @@ func JSONHandler(path string, fallback http.Handler) (http.HandlerFunc, error) {
 	pathsToURLs := buildMap(paths)
 
 	return MapHandler(pathsToURLs, fallback), nil
+}
+
+// SQLHandler will use the provided sql.DB and then return
+// an http.HandlerFunc (which also implements http.Handler)
+// that will attempt to map any paths to their corresponding
+// URL. IF the path is not provided in the JSON, then the
+// fallback http.Handler will be called instead.
+//
+// SQL table is expected to be in the format:
+// CREATE TABLE url_paths (
+//
+//		id SERIAL PRIMARY KEY,
+//	    path TEXT UNIQUE NOT NULL,
+//	    url TEXT NOT NULL
+//
+// );
+//
+// The only errors that will be returned all relate to having
+// invalid sql.DB or table structure.
+//
+// See `MapHandler` to create a similar http.HandlerFunc via
+// a mapping of paths to urls.
+func SQLHandler(db *sql.DB, fallback http.Handler) (http.HandlerFunc, error) {
+	return nil, fmt.Errorf("not implemented")
 }
