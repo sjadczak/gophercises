@@ -12,9 +12,11 @@ import (
 
 func main() {
 	// Handle CLI flags
-	var yaml_path, json_path string
+	var yaml_path string
+	var json_path string
 	flag.StringVar(&yaml_path, "yaml", "", "Path to YAML file containing path-to-urls data.")
 	flag.StringVar(&json_path, "json", "", "Path to JSON file containing path-to-urls data.")
+	flag.Parse()
 
 	// Create fallback http.Handler
 	mux := http.NewServeMux()
@@ -24,8 +26,8 @@ func main() {
 
 	// Create path-to-url map
 	paths := map[string]string{
-		"g":    "https://google.com",
-		"dags": "https://tenor.com/view/dags-do-you-like-dags-snatch-brad-pitt-gif-16273104",
+		"/g":    "https://google.com",
+		"/dags": "https://tenor.com/view/dags-do-you-like-dags-snatch-brad-pitt-gif-16273104",
 	}
 
 	// Create MapHandler
@@ -46,6 +48,8 @@ func main() {
 	}
 
 	// Run server & listen
+	log.Println("URLShort listening on localhost:8080...")
+	log.Println("Enter ctrl+c to quit")
 	err = http.ListenAndServe("localhost:8080", jh)
 	if err != nil {
 		log.Fatalf("Couldn't start urlshort server: %v", err)
