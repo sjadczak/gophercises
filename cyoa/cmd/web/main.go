@@ -27,5 +27,5 @@ func main() {
 }
 
 func redirect(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/story/home", http.StatusFound)
+	http.Redirect(w, r, "/story/intro", http.StatusFound)
 }
