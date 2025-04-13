@@ -7,25 +7,24 @@ import (
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/sjadczak/gophercises/cyoa/story"
+	"path"
 )
 
 type HTMLTemplate struct {
 	tpl *template.Template
 }
 
-func Parse(pattern string) (HTMLTemplate, error) {
-	tpl := template.New(pattern)
-	tpl, err := tpl.ParseFiles("templates/story.gohtml")
+func Parse(pattern string) (*HTMLTemplate, error) {
+	tpl := template.New(path.Base(pattern))
+	tpl, err := tpl.ParseFiles(pattern)
 	if err != nil {
-		return HTMLTemplate{}, fmt.Errorf("parsing html template: %w", err)
+		return nil, fmt.Errorf("parsing html template: %w", err)
 	}
 
-	return HTMLTemplate{tpl}, nil
+	return &HTMLTemplate{tpl}, nil
 }
 
-func (t HTMLTemplate) Execute(w http.ResponseWriter, r *http.Request, data story.Arc) {
+func (t *HTMLTemplate) Execute(w http.ResponseWriter, r *http.Request, data any) {
 	tpl, err := t.tpl.Clone()
 	if err != nil {
 		log.Printf("cloning template: %v\n", err)
@@ -38,7 +37,7 @@ func (t HTMLTemplate) Execute(w http.ResponseWriter, r *http.Request, data story
 	var buf bytes.Buffer
 	err = tpl.Execute(&buf, data)
 	if err != nil {
-		log.Printf("executing html template: %v", err)
+		log.Printf("executing html template: %+v", err)
 		http.Error(w, "There was an error rendering the page.", http.StatusInternalServerError)
 		return
 	}
